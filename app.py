@@ -1,14 +1,15 @@
-from flask import Flask,request,render_template
+from flask import Flask,request,render_template 
 import google.generativeai as palm
-import replicate
+import replicate 
 import os
 
-os.environ["REPLICATE_API_TOKEN"] = "r8_PgWv9pc0H0ITuiG96E5M6E8jWuFz4Zy1aZqMA"
+os.environ["REPLICATE_API_TOKEN"] = "r8_5816og66bLYZMFM5d12v5DOOLCy5ynQ1z4Spz"
 
 model = {
     "model": "models/chat-bison-001"
 }
-palm.configure(api_key="AIzaSyCCT1K99BJ1JbLwhCE7qOcQ5KOZcPJ9ZZ4")
+palm.configure(api_key="AIzaSyBwXIC6N4ZFd3n41FdwkFzjN_ewoVvmZIY")
+
 
 app = Flask(__name__)
 
@@ -18,14 +19,14 @@ flag=1
 @app.route("/",methods=["GET","POST"])
 def index():
     return(render_template("index.html"))
-
+           
 @app.route("/main",methods=["GET","POST"])
 def main():
     global name,flag
-    if flag==1:
+    if flag==1: 
         name = request.form.get("q")
         flag=0
-    return(render_template("main.html",r=name))
+    return(render_template("main.html", r=name))
 
 @app.route("/text",methods=["GET","POST"])
 def text():
@@ -35,8 +36,7 @@ def text():
 def text_reply():
     q = request.form.get("q")
     r = palm.chat(**model, messages=q)
-    return(render_template("text_reply.html",r=r.last))
-
+    return(render_template("text_reply.html", r=r.last))
 
 @app.route("/image",methods=["GET","POST"])
 def image():
@@ -51,7 +51,7 @@ def image_reply():
             "prompt": q,
         }
     )
-    return(render_template("image_reply.html",r=r[0]))
+    return(render_template("image_reply.html", r=r[0]))
 
 @app.route("/music",methods=["GET","POST"])
 def music():
@@ -61,13 +61,13 @@ def music():
 def music_reply():
     q = request.form.get("q")
     r = replicate.run(
-        "meta/musicgen:7be0f12c54a8d033a0fbd14418c9af98962da9a86f5ff7811f9b3423a1f0b7d7",
+        "meta/musicgen:7be0f12c54a8d033a0fbd14418c9af98962da9a86f5ff7811f9b3423a1f0b7d7", 
         input={
             "prompt": q,
-            "duration":5
+            "duration": 5
         }
     )
-    return(render_template("music_reply.html",r=r))
+    return(render_template("music_reply.html", r=r))
 
 @app.route("/video",methods=["GET","POST"])
 def video():
@@ -77,20 +77,19 @@ def video():
 def video_reply():
     q = request.form.get("q")
     r = replicate.run(
-        "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351",
+        "anotherjesse/zeroscope-v2-xl:9f747673945c62801b13b84701c783929c0ee784e4748ec062204894dda1a351", 
         input={
             "prompt": q,
             "num_frames":10
         }
     )
-    return(render_template("video_reply.html",r=r[0]))
+    return(render_template("video_reply.html", r=r[0]))
            
 @app.route("/end",methods=["GET","POST"])
 def end():
-    global flag
+    global flag 
     print("for gracefully ended")
-    flag=1
     return(render_template("index.html"))
-    
+   
 if __name__ == "__main__":
     app.run()
